@@ -66,6 +66,20 @@ extension Renderer: MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
+        guard let descriptor = view.currentRenderPassDescriptor,
+              let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
+              let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
+        else {
+            return
+        }
         
+        // Drawing code here
+        
+        renderEncoder.endEncoding()
+        guard let drawable = view.currentDrawable else {
+            return
+        }
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
     }
 }
