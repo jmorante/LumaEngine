@@ -66,6 +66,7 @@ extension Renderer: MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
+        print("draw")
         guard let descriptor = view.currentRenderPassDescriptor,
               let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
               let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
@@ -74,6 +75,18 @@ extension Renderer: MTKViewDelegate {
         }
         
         // Drawing code here
+        renderEncoder.setRenderPipelineState(pipelineState)
+        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        for submesh in mesh.submeshes {
+            renderEncoder.drawIndexedPrimitives(type: .triangle,
+                                              indexCount: submesh.indexCount,
+                                              indexType: submesh.indexType,
+                                              indexBuffer: submesh.indexBuffer.buffer,
+                                              indexBufferOffset:submesh.indexBuffer.offset)
+        }
+                                      
+        
+        // -----
         
         renderEncoder.endEncoding()
         guard let drawable = view.currentDrawable else {
